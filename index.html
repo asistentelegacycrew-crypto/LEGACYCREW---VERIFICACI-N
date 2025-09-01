@@ -29,12 +29,12 @@
 
           for (let fila of filas) {
             const columnas = fila.split(",");
-            const consecutivo = columnas[1]?.trim(); // CONSECUTIVO
+            const consecutivo = columnas[1]?.trim(); // columna 2: CONSECUTIVO
 
             if (consecutivo === codigoBuscado.trim()) {
+              const fecha = columnas[0];
               const nombre = columnas[2];
               const curso = columnas[3];
-              const fecha = columnas[0];
               const link = columnas[4];
               const vigencia = columnas[6];
 
@@ -42,7 +42,7 @@
                 <p><strong>Nombre:</strong> ${nombre}</p>
                 <p><strong>Curso / Evento:</strong> ${curso}</p>
                 <p><strong>Fecha de emisión:</strong> ${fecha}</p>
-                <p><strong>Vigencia:</strong> <span class="${vigencia === 'VÁLIDO' ? 'valid' : 'error'}">${vigencia}</span></p>
+                <p><strong>Vigencia:</strong> <span class="${vigencia === 'VALIDO' ? 'valid' : 'error'}">${vigencia}</span></p>
                 <p><a href="${link}" target="_blank">📄 Ver constancia</a></p>
               `;
               encontrado = true;
