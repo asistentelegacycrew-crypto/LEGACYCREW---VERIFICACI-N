@@ -1,11 +1,55 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Verificación LEGACYCREW</title>
-  </head>
-  <body style="font-family: sans-serif; padding: 2rem;">
-    <h1>✅ Sitio de verificación activo</h1>
-    <p>Este será el sistema donde se mostrará la constancia según el código escaneado.</p>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>Verificación LEGACYCREW</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
+    h1 { color: #2E86C1; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <h1>✅ Verificación de Constancia</h1>
+  <div id="resultado">Cargando...</div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const codigoBuscado = params.get("codigo");
+
+    if (!codigoBuscado) {
+      document.getElementById("resultado").innerHTML = "<p class='error'>❌ No se proporcionó ningún código.</p>";
+    } else {
+      fetch("constancias.csv")
+        .then(response => response.text())
+        .then(data => {
+          const filas = data.trim().split("\n").slice(1); // omitir encabezado
+          let encontrado = false;
+
+          for (let fila of filas) {
+            const [codigo, nombre, curso, fecha, estado, link] = fila.split(",");
+
+            if (codigo.trim() === codigoBuscado.trim()) {
+              document.getElementById("resultado").innerHTML = `
+                <p><strong>Nombre:</strong> ${nombre}</p>
+                <p><strong>Curso:</strong> ${curso}</p>
+                <p><strong>Fecha:</strong> ${fecha}</p>
+                <p><strong>Estado:</strong> ${estado}</p>
+                <p><a href="${link}" target="_blank">📄 Ver certificado</a></p>
+              `;
+              encontrado = true;
+              break;
+            }
+          }
+
+          if (!encontrado) {
+            document.getElementById("resultado").innerHTML = "<p class='error'>❌ Código no encontrado.</p>";
+          }
+        })
+        .catch(error => {
+          document.getElementById("resultado").innerHTML = "<p class='error'>❌ Error al cargar los datos.</p>";
+        });
+    }
+  </script>
+</body>
 </html>
