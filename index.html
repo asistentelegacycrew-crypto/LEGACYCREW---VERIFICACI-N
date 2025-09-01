@@ -7,6 +7,7 @@
     body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
     h1 { color: #2E86C1; }
     .error { color: red; }
+    .valid { color: green; }
   </style>
 </head>
 <body>
@@ -20,22 +21,29 @@
     if (!codigoBuscado) {
       document.getElementById("resultado").innerHTML = "<p class='error'>❌ No se proporcionó ningún código.</p>";
     } else {
-      fetch("constancias.csv")
+      fetch("REGISTRO%20DE%20CONSTANCIA%20-%20REGISTRO%20DE%20CERTIFICADOS.csv")
         .then(response => response.text())
         .then(data => {
           const filas = data.trim().split("\n").slice(1); // omitir encabezado
           let encontrado = false;
 
           for (let fila of filas) {
-            const [codigo, nombre, curso, fecha, estado, link] = fila.split(",");
+            const columnas = fila.split(",");
+            const consecutivo = columnas[1]?.trim(); // CONSECUTIVO
 
-            if (codigo.trim() === codigoBuscado.trim()) {
+            if (consecutivo === codigoBuscado.trim()) {
+              const nombre = columnas[2];
+              const curso = columnas[3];
+              const fecha = columnas[0];
+              const link = columnas[4];
+              const vigencia = columnas[6];
+
               document.getElementById("resultado").innerHTML = `
                 <p><strong>Nombre:</strong> ${nombre}</p>
-                <p><strong>Curso:</strong> ${curso}</p>
-                <p><strong>Fecha:</strong> ${fecha}</p>
-                <p><strong>Estado:</strong> ${estado}</p>
-                <p><a href="${link}" target="_blank">📄 Ver certificado</a></p>
+                <p><strong>Curso / Evento:</strong> ${curso}</p>
+                <p><strong>Fecha de emisión:</strong> ${fecha}</p>
+                <p><strong>Vigencia:</strong> <span class="${vigencia === 'VÁLIDO' ? 'valid' : 'error'}">${vigencia}</span></p>
+                <p><a href="${link}" target="_blank">📄 Ver constancia</a></p>
               `;
               encontrado = true;
               break;
